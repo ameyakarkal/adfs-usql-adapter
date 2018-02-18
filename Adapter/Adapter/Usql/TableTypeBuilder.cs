@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Adapter.Sql;
 
 namespace Adapter.Usql
@@ -21,10 +22,9 @@ namespace Adapter.Usql
         {
             var columns = tableSchema.Columns.Select(col =>
             {
-                var nullable = col.IsNullable ? "?" : string.Empty;
-                var dataType = Datatype();
+                var dataType = Datatype(col.DataType, col.IsNullable);
                 var columnName = ColumnName(col.ColumnName);
-                return $"{columnName} {dataType}{nullable}";
+                return $"{columnName} {dataType}";
             }).ToList();
 
             var columnDefinitions = string.Join(",\n", columns);
@@ -32,17 +32,17 @@ namespace Adapter.Usql
             var catalog = Catalog(tableSchema.Catalog);
             var schema = Schema(tableSchema.Schema);
             var tableTypeName = TableTypeName(tableSchema.TableName);
-
+            var scriptName = tableTypeName + ".TableType.usql";
             var script = $@"CREATE TABLE TYPE [${catalog}].[{schema}].[{tableTypeName}] AS TABLE(
-            {columnDefinitions}
-            )";
-
+{columnDefinitions}
+)";
             return new TableType
             {
                 Catalog = catalog,
                 Schema = schema,
                 TableTypeName = tableTypeName,
-                Script = script
+                Script = script,
+                ScriptName = scriptName
             };
         }
 
@@ -71,9 +71,39 @@ namespace Adapter.Usql
             return $"{TableTypeName(tableName)}TableType.usql";
         }
 
-        public string Datatype()
+        //add more cases
+        public string Datatype(string datatype, bool isNullable)
         {
-            return null;
+            string dataType;
+            switch (datatype.ToLower())
+            {
+                case "bit":
+                    dataType = "bool";
+                    break;
+                case "int":
+                    dataType = "int";
+                    break;
+                case "datetime":
+                case "datetimeoffset":
+                    dataType = "DateTime";
+                    break;
+                case "nvarchar":
+                case "varchar":
+                    dataType = "string";
+                    break;
+                case "uniqueidentifier":
+                    dataType = "Guid";
+                    break;
+                default:
+                    throw new Exception($"{datatype} not mapped");
+            }
+            if (isNullable 
+                && "string" != dataType)
+            {
+                dataType += "?";
+            }
+
+            return dataType;
         }
 
     }

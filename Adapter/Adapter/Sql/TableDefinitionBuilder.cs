@@ -9,13 +9,14 @@ namespace Adapter.Sql
         private readonly DataSource _conn;
         private const string TableDefinition = @"
         SELECT
-        TABLE_CATALOG AS Catalog,
-        TABLE_SCHEMA AS Schema,
-        TABLE_NAME AS Table
+        TABLE_CATALOG AS [Catalog],
+        TABLE_SCHEMA AS [Schema],
+        TABLE_NAME AS [TableName]
         
         FROM information_schema.[tables]
         WHERE 
-            TABLE_TYPE='BASETABLE'
+            TABLE_TYPE='BASE TABLE'
+        AND TABLE_SCHEMA = @tableSchema
         AND Table_NAME = @tableName";
 
         private const string ColumnDefinition = @"

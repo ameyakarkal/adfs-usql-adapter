@@ -6,4 +6,8 @@
 
         public string Schema { get; set; }
     }
+    class NullUsqlContext : UsqlContext
+    {
+
+    }
 }
