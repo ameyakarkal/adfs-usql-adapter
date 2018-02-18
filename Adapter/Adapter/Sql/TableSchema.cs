@@ -4,20 +4,17 @@ namespace Adapter.Sql
 {
     public class TableSchema
     {
-        public TableSchema(string schemaName, string tableName)
-        {
-            SchemaName = schemaName;
-            TableName = tableName;
-            Columns = new List<ColumnSchema>();
-        }
-        public string SchemaName { get; }
-        public string TableName { get; }
+        public string Catalog { get; set; }
+
+        public string Schema { get; set; }
+
+        public string TableName { get; set; }
 
         public IList<ColumnSchema> Columns { get; set; }
 
         public class ColumnSchema
         {
-            public string Name { get; set; }
+            public string ColumnName { get; set; }
 
             public string DataType { get; set; }
 

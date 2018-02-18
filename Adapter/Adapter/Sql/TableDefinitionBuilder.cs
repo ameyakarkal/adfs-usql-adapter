@@ -9,8 +9,9 @@ namespace Adapter.Sql
         private readonly DataSource _conn;
         private const string TableDefinition = @"
         SELECT
-        TABLE_SCHEMA AS SchemaName,
-        TABLE_NAME AS TableName
+        TABLE_CATALOG AS Catalog,
+        TABLE_SCHEMA AS Schema,
+        TABLE_NAME AS Table
         
         FROM information_schema.[tables]
         WHERE 
@@ -19,7 +20,7 @@ namespace Adapter.Sql
 
         private const string ColumnDefinition = @"
         SELECT
-        column_name AS  Name,
+        column_name AS  ColumnName,
         data_type AS DataType,
         case when is_nullable = 'NO' then 0 else 1 end as IsNullable
 

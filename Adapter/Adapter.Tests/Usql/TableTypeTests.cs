@@ -10,7 +10,7 @@ namespace Adapter.Tests.Usql
         [Test]
         public void ShouldGetDatabase(string database, string expected)
         {
-            var actual = new TableTypeBuilder().Database(database);
+            var actual = new TableTypeBuilder().Catalog(database);
 
             Assert.AreEqual(expected, actual);
         }
